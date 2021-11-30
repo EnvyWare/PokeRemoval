@@ -9,6 +9,8 @@ import com.pixelmonmod.pixelmon.api.pokemon.PokemonSpec;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraftforge.fml.common.registry.EntityEntry;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.Collections;
@@ -108,7 +110,17 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
             }
 
             if (entity instanceof EntityPixelmon) {
-                return this.mode.shouldRemovePokemon(this.getMatchingRequirements(), ((EntityPixelmon) entity).getPokemonData());
+                EntityPixelmon pixelmon = (EntityPixelmon) entity;
+
+                if (pixelmon.battleController != null) {
+                    return false;
+                }
+
+                if (pixelmon.hasOwner()) {
+                    return false;
+                }
+
+                return this.mode.shouldRemovePokemon(this.getMatchingRequirements(), pixelmon.getPokemonData());
             }
 
             return true;
@@ -186,17 +198,26 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
 
         WHITELIST((pokemonSpecs, pokemon) -> {
             for (PokemonSpec pokemonSpec : pokemonSpecs) {
+                System.out.println("HELLO");
                 if (pokemonSpec.matches(pokemon)) {
+                    System.out.println("IS IT MATCHING?");
                     return true;
                 }
             }
 
             return false;
         }, (types, entity) -> {
-            String entityString = EntityList.getEntityString(entity);
+            EntityEntry registry = EntityRegistry.getEntry(entity.getClass());
+
+            if (registry == null) {
+                return false;
+            }
+
+            String entityString = registry.getRegistryName().toString();
 
             for (String type : types) {
                 if (type.equalsIgnoreCase(entityString)) {
+                    System.out.println("HELLO");
                     return true;
                 }
             }
