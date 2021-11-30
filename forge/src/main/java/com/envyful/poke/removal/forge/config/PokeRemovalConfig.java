@@ -99,6 +99,10 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
         }
 
         public boolean shouldRemove(Entity entity) {
+            if (this.ignoreEntitiesYoungerThan > 0 && entity.ticksExisted <= this.ignoreEntitiesYoungerThan) {
+                return false;
+            }
+
             if (!this.mode.shouldRemoveEntity(this.getRemovedEntities(), entity)) {
                 return false;
             }
