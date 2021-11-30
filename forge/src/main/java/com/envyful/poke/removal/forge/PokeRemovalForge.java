@@ -17,7 +17,7 @@ import java.io.IOException;
         name = "BetterDexRewards Forge",
         version = PokeRemovalForge.VERSION,
         acceptableRemoteVersions = "*",
-        updateJSON = "" //TODO:
+        updateJSON = "https://ogn.pixelmonmod.com/update/sm-pr/update.json"
 )
 public class PokeRemovalForge {
 
