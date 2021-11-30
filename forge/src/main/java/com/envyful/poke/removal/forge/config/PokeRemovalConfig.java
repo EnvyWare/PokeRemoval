@@ -2,13 +2,16 @@ package com.envyful.poke.removal.forge.config;
 
 import com.envyful.api.config.data.ConfigPath;
 import com.envyful.api.config.yaml.AbstractYamlConfig;
-import com.envyful.api.reforged.pixelmon.PokemonSpec;
-import com.google.common.collect.Maps;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
+import com.pixelmonmod.pixelmon.api.pokemon.PokemonSpec;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,8 +21,43 @@ import java.util.function.BiPredicate;
 @ConfigPath("config/PokeRemoval/config.yml")
 public class PokeRemovalConfig extends AbstractYamlConfig {
 
-    private Map<String, RemovalSetting> removalSettings = Maps.newHashMap();
+    private Map<String, RemovalSetting> removalSettings = ImmutableMap.of(
+            "one", new RemovalSetting(
+                    "Pokemon", RemovalType.WHITELIST, Sets.newHashSet("pixelmon:pixelmon"),
+                    Lists.newArrayList("shiny:false", "boss:false"), true,
+                    Lists.newArrayList(
+                            " ",
+                            "&c&l!!! INACTIVE POKEMON WERE JUST CLEARED FROM THE WORLD (%amount%) !!!",
+                            " "
+                    ),  30, 60,
+                    ImmutableMap.of(
+                            "first", new PokeRemovalConfig.WarningBroadcast(true, 1500, Lists.newArrayList("&e&l(!) " + "&eAll entities will be removed in 25 minutes")),
+                            "second", new PokeRemovalConfig.WarningBroadcast(true, 600, Lists.newArrayList("&e&l(!) &eAll entities will be removed in 10 minutes")),
+                            "third", new PokeRemovalConfig.WarningBroadcast(true, 30, Lists.newArrayList("&e&l(!) &eAll entities will be removed in 30 seconds"))
+                    )
+            ),
+            "two", new RemovalSetting(
+                    "Items", RemovalType.WHITELIST, Sets.newHashSet("minecraft:item"),
+                    Collections.emptyList(), true,
+                    Lists.newArrayList(
+                            " ",
+                            "&c&l!!! INACTIVE ITEMS WERE JUST CLEARED FROM THE WORLD (%amount%) !!!",
+                            " "
+                    ),  30, 60,
+                    ImmutableMap.of(
+                            "first", new PokeRemovalConfig.WarningBroadcast(true, 1500, Lists.newArrayList("&e&l(!) " + "&eAll entities will be removed in 25 minutes")),
+                            "second", new PokeRemovalConfig.WarningBroadcast(true, 600, Lists.newArrayList("&e&l(!) &eAll entities will be removed in 10 minutes")),
+                            "third", new PokeRemovalConfig.WarningBroadcast(true, 30, Lists.newArrayList("&e&l(!) &eAll entities will be removed in 30 seconds"))
+                    )
+            )
+    );
 
+    public PokeRemovalConfig() {
+    }
+
+    public Map<String, RemovalSetting> getRemovalSettings() {
+        return this.removalSettings;
+    }
 
     @ConfigSerializable
     public static class RemovalSetting {
@@ -30,21 +68,26 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
         private List<String> matchingRequirements;
         private boolean broadcastRemoval;
         private List<String> removalBroadcast;
-        private int removalTime;
+        private int removalTimeMinutes;
+        private long ignoreEntitiesYoungerThan;
         private Map<String, WarningBroadcast> warningBroadcasts;
+
+        private transient List<PokemonSpec> matchingSpecs = null;
 
         public RemovalSetting() {
         }
 
         public RemovalSetting(String name, RemovalType mode, Set<String> removedEntities,
-                              List<String> matchingRequirements, boolean broadcastRemoval, List<String> removalBroadcast, int removalTime, Map<String, WarningBroadcast> warningBroadcasts) {
+                              List<String> matchingRequirements, boolean broadcastRemoval, List<String> removalBroadcast,
+                              int removalTimeMinutes, long ignoreEntitiesYoungerThan, Map<String, WarningBroadcast> warningBroadcasts) {
             this.name = name;
             this.mode = mode;
             this.removedEntities = removedEntities;
             this.matchingRequirements = matchingRequirements;
             this.broadcastRemoval = broadcastRemoval;
             this.removalBroadcast = removalBroadcast;
-            this.removalTime = removalTime;
+            this.removalTimeMinutes = removalTimeMinutes;
+            this.ignoreEntitiesYoungerThan = ignoreEntitiesYoungerThan;
             this.warningBroadcasts = warningBroadcasts;
         }
 
@@ -60,8 +103,18 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
             return this.removedEntities;
         }
 
-        public List<String> getMatchingRequirements() {
-            return this.matchingRequirements;
+        public List<PokemonSpec> getMatchingRequirements() {
+            if (this.matchingSpecs == null) {
+                List<PokemonSpec> matchingSpecs = Lists.newArrayList();
+
+                for (String matchingRequirement : this.matchingRequirements) {
+                    matchingSpecs.add(PokemonSpec.from(matchingRequirement));
+                }
+
+                this.matchingSpecs = matchingSpecs;
+            }
+
+            return this.matchingSpecs;
         }
 
         public boolean isBroadcastRemoval() {
@@ -72,8 +125,12 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
             return this.removalBroadcast;
         }
 
-        public int getRemovalTime() {
-            return this.removalTime;
+        public int getRemovalTimeMinutes() {
+            return this.removalTimeMinutes;
+        }
+
+        public long getIgnoreEntitiesYoungerThan() {
+            return this.ignoreEntitiesYoungerThan;
         }
 
         public Map<String, WarningBroadcast> getWarningBroadcasts() {
@@ -85,15 +142,15 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
     public static class WarningBroadcast {
 
         private boolean enabled;
-        private int timeBeforeRemoval;
+        private int timeBeforeRemovalSeconds;
         private List<String> broadcast;
 
         public WarningBroadcast() {
         }
 
-        public WarningBroadcast(boolean enabled, int timeBeforeRemoval, List<String> broadcast) {
+        public WarningBroadcast(boolean enabled, int timeBeforeRemovalSeconds, List<String> broadcast) {
             this.enabled = enabled;
-            this.timeBeforeRemoval = timeBeforeRemoval;
+            this.timeBeforeRemovalSeconds = timeBeforeRemovalSeconds;
             this.broadcast = broadcast;
         }
 
@@ -101,8 +158,8 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
             return this.enabled;
         }
 
-        public int getTimeBeforeRemoval() {
-            return this.timeBeforeRemoval;
+        public int getTimeBeforeRemovalSeconds() {
+            return this.timeBeforeRemovalSeconds;
         }
 
         public List<String> getBroadcast() {
@@ -115,40 +172,40 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
         WHITELIST((pokemonSpecs, pokemon) -> {
             for (PokemonSpec pokemonSpec : pokemonSpecs) {
                 if (pokemonSpec.matches(pokemon)) {
-                    return false;
+                    return true;
                 }
             }
 
-            return true;
+            return false;
         }, (types, entity) -> {
             String entityString = EntityList.getEntityString(entity);
 
             for (String type : types) {
                 if (type.equalsIgnoreCase(entityString)) {
-                    return false;
+                    return true;
                 }
             }
 
-            return true;
+            return false;
         }),
         BLACKLIST((pokemonSpecs, pokemon) -> {
             for (PokemonSpec pokemonSpec : pokemonSpecs) {
                 if (pokemonSpec.matches(pokemon)) {
-                    return true;
+                    return false;
                 }
             }
 
-            return false;
+            return true;
         }, (types, entity) -> {
             String entityString = EntityList.getEntityString(entity);
 
             for (String type : types) {
                 if (type.equalsIgnoreCase(entityString)) {
-                    return true;
+                    return false;
                 }
             }
 
-            return false;
+            return true;
         }),
 
         ;
