@@ -198,9 +198,7 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
 
         WHITELIST((pokemonSpecs, pokemon) -> {
             for (PokemonSpec pokemonSpec : pokemonSpecs) {
-                System.out.println("HELLO");
                 if (pokemonSpec.matches(pokemon)) {
-                    System.out.println("IS IT MATCHING?");
                     return true;
                 }
             }
@@ -217,7 +215,6 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
 
             for (String type : types) {
                 if (type.equalsIgnoreCase(entityString)) {
-                    System.out.println("HELLO");
                     return true;
                 }
             }
