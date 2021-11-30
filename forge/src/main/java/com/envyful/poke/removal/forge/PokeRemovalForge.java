@@ -37,7 +37,7 @@ public class PokeRemovalForge {
 
         new ForgeTaskBuilder()
                 .task(new PokeRemovalTask(this))
-                .interval(10)
+                .interval(20L)
                 .async(false)
                 .delay(20L)
                 .start();
