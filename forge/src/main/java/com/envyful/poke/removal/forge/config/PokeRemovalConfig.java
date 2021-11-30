@@ -4,9 +4,9 @@ import com.envyful.api.config.data.ConfigPath;
 import com.envyful.api.config.yaml.AbstractYamlConfig;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
 import com.pixelmonmod.pixelmon.api.pokemon.PokemonSpec;
+import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
@@ -14,7 +14,6 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.BiPredicate;
 
 @ConfigSerializable
@@ -23,7 +22,7 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
 
     private Map<String, RemovalSetting> removalSettings = ImmutableMap.of(
             "one", new RemovalSetting(
-                    "Pokemon", RemovalType.WHITELIST, Sets.newHashSet("pixelmon:pixelmon"),
+                    "Pokemon", RemovalType.WHITELIST, Lists.newArrayList("pixelmon:pixelmon"),
                     Lists.newArrayList("shiny:false", "boss:false"), true,
                     Lists.newArrayList(
                             " ",
@@ -37,7 +36,7 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
                     )
             ),
             "two", new RemovalSetting(
-                    "Items", RemovalType.WHITELIST, Sets.newHashSet("minecraft:item"),
+                    "Items", RemovalType.WHITELIST, Lists.newArrayList("minecraft:item"),
                     Collections.emptyList(), true,
                     Lists.newArrayList(
                             " ",
@@ -64,7 +63,7 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
 
         private String name;
         private RemovalType mode;
-        private Set<String> removedEntities;
+        private List<String> removedEntities;
         private List<String> matchingRequirements;
         private boolean broadcastRemoval;
         private List<String> removalBroadcast;
@@ -77,7 +76,7 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
         public RemovalSetting() {
         }
 
-        public RemovalSetting(String name, RemovalType mode, Set<String> removedEntities,
+        public RemovalSetting(String name, RemovalType mode, List<String> removedEntities,
                               List<String> matchingRequirements, boolean broadcastRemoval, List<String> removalBroadcast,
                               int removalTimeMinutes, long ignoreEntitiesYoungerThan, Map<String, WarningBroadcast> warningBroadcasts) {
             this.name = name;
@@ -99,7 +98,19 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
             return this.mode;
         }
 
-        public Set<String> getRemovedEntities() {
+        public boolean shouldRemove(Entity entity) {
+            if (!this.mode.shouldRemoveEntity(this.getRemovedEntities(), entity)) {
+                return false;
+            }
+
+            if (entity instanceof EntityPixelmon) {
+                return this.mode.shouldRemovePokemon(this.getMatchingRequirements(), ((EntityPixelmon) entity).getPokemonData());
+            }
+
+            return true;
+        }
+
+        public List<String> getRemovedEntities() {
             return this.removedEntities;
         }
 

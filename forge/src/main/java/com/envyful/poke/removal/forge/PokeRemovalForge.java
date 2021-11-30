@@ -2,7 +2,9 @@ package com.envyful.poke.removal.forge;
 
 import com.envyful.api.config.yaml.YamlConfigFactory;
 import com.envyful.api.forge.command.ForgeCommandFactory;
+import com.envyful.api.forge.concurrency.ForgeTaskBuilder;
 import com.envyful.poke.removal.forge.config.PokeRemovalConfig;
+import com.envyful.poke.removal.forge.task.PokeRemovalTask;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
@@ -32,6 +34,12 @@ public class PokeRemovalForge {
     public void onInit(FMLInitializationEvent event) {
         this.reloadConfig();
 
+        new ForgeTaskBuilder()
+                .task(new PokeRemovalTask(this))
+                .interval(10)
+                .async(false)
+                .delay(20L)
+                .start();
     }
 
     public void reloadConfig() {
@@ -49,5 +57,9 @@ public class PokeRemovalForge {
 
     public static PokeRemovalForge getInstance() {
         return instance;
+    }
+
+    public PokeRemovalConfig getConfig() {
+        return this.config;
     }
 }
