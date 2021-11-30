@@ -25,7 +25,7 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
     private Map<String, RemovalSetting> removalSettings = ImmutableMap.of(
             "one", new RemovalSetting(
                     "Pokemon", RemovalType.WHITELIST, Lists.newArrayList("pixelmon:pixelmon"),
-                    Lists.newArrayList("shiny:false", "boss:false"), true,
+                    Lists.newArrayList("!shiny", "boss:false"), true,
                     Lists.newArrayList(
                             " ",
                             "&c&l!!! INACTIVE POKEMON WERE JUST CLEARED FROM THE WORLD (%amount%) !!!",
