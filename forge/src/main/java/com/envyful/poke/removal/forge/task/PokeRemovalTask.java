@@ -29,6 +29,10 @@ public class PokeRemovalTask implements Runnable {
         for (PokeRemovalConfig.RemovalSetting value : this.mod.getConfig().getRemovalSettings().values()) {
             long lastRemovalDuration = System.currentTimeMillis() - this.getLastRemoval(value);
 
+            if (lastRemovalDuration >= value.getRemovalTimeMinutes()) {
+                toRemove.add(value);
+            }
+
             for (PokeRemovalConfig.WarningBroadcast warningBroadcast : value.getWarningBroadcasts().values()) {
                 if (!warningBroadcast.isEnabled()) {
                     continue;
