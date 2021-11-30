@@ -63,7 +63,6 @@ public class PokeRemovalTask implements Runnable {
 
                     if (removalSetting.shouldRemove(next)) {
                         next.setDead();
-                        iterator.remove();
                         ++removed;
                     }
                 }
