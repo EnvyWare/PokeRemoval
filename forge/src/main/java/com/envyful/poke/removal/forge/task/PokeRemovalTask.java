@@ -57,6 +57,10 @@ public class PokeRemovalTask implements Runnable {
             int removed = 0;
 
             for (WorldServer world : FMLCommonHandler.instance().getMinecraftServerInstance().worlds) {
+                if (removalSetting.getBlacklistedWorlds().contains(world.getWorldInfo().getWorldName())) {
+                    continue;
+                }
+
                 Iterator<Entity> iterator = world.loadedEntityList.iterator();
 
                 while (iterator.hasNext()) {

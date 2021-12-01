@@ -72,6 +72,7 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
         private int removalTimeMinutes;
         private long ignoreEntitiesYoungerThan;
         private Map<String, WarningBroadcast> warningBroadcasts;
+        private List<String> blacklistedWorlds = Lists.newArrayList();
 
         private transient List<PokemonSpec> matchingSpecs = null;
 
@@ -162,6 +163,10 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
 
         public Map<String, WarningBroadcast> getWarningBroadcasts() {
             return this.warningBroadcasts;
+        }
+
+        public List<String> getBlacklistedWorlds() {
+            return this.blacklistedWorlds;
         }
     }
 
