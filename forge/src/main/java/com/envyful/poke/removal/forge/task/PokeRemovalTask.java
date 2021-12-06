@@ -73,6 +73,12 @@ public class PokeRemovalTask implements Runnable {
                 }
             }
 
+            this.lastRemoval.put(removalSetting.getName(), System.currentTimeMillis());
+
+            if (!removalSetting.isBroadcastRemoval()) {
+                continue;
+            }
+
             for (String s : removalSetting.getRemovalBroadcast()) {
                 FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().sendMessage(
                         new TextComponentString(UtilChatColour.translateColourCodes('&', s.replace(
@@ -81,8 +87,6 @@ public class PokeRemovalTask implements Runnable {
                         )))
                 );
             }
-
-            this.lastRemoval.put(removalSetting.getName(), System.currentTimeMillis());
         }
 
     }
