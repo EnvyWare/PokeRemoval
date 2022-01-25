@@ -59,7 +59,6 @@ shadowJar {
     relocate('com.envyful.api', 'com.envyful.poke.removal.forge.shade.envy.api')
     relocate('org.bstats', 'com.envyful.poke.removal.forge.shade.bstats')
 
-
     exclude "**/module-info.class"
 }
 
