@@ -74,6 +74,8 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
         private Map<String, WarningBroadcast> warningBroadcasts;
         private List<String> blacklistedWorlds = Lists.newArrayList();
 
+        private transient boolean locked = false;
+
         private transient List<PokemonSpec> matchingSpecs = null;
 
         public RemovalSetting() {
@@ -167,6 +169,14 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
 
         public List<String> getBlacklistedWorlds() {
             return this.blacklistedWorlds;
+        }
+
+        public boolean isLocked() {
+            return this.locked;
+        }
+
+        public void setLocked(boolean locked) {
+            this.locked = locked;
         }
     }
 

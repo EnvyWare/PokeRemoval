@@ -54,7 +54,12 @@ public class PokeRemovalTask implements Runnable {
         }
 
         for (PokeRemovalConfig.RemovalSetting removalSetting : toRemove) {
+            if (removalSetting.isLocked()) {
+                continue;
+            }
+
             int removed = 0;
+            removalSetting.setLocked(true);
 
             for (WorldServer world : FMLCommonHandler.instance().getMinecraftServerInstance().worlds) {
                 if (removalSetting.getBlacklistedWorlds().contains(world.getWorldInfo().getWorldName())) {
@@ -87,6 +92,8 @@ public class PokeRemovalTask implements Runnable {
                         )))
                 );
             }
+
+            removalSetting.setLocked(false);
         }
 
     }
