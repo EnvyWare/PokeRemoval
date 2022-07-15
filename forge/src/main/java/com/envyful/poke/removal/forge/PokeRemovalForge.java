@@ -22,7 +22,7 @@ import java.io.IOException;
 public class PokeRemovalForge {
 
     protected static final String MOD_ID = "pokeremoval";
-    protected static final String VERSION = "1.1.2";
+    protected static final String VERSION = "2.0.0";
 
     @Mod.Instance(MOD_ID)
     private static PokeRemovalForge instance;
