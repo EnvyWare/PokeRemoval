@@ -1,0 +1,30 @@
+modLoader="javafml"
+loaderVersion="[36,)"
+license="MIT"
+issueTrackerURL="https://github.com/EnvyWare/BetterDexRewards/issues"
+
+[[mods]]
+modId="pokeremoval"
+version="1.1.2"
+displayName="PokeRemoval Forge"
+displayURL="https://github.com/EnvyWare"
+credits="https://github.com/EnvyWare"
+authors="https://github.com/EnvyWare"
+updateJSONURL="https://ogn.pixelmonmod.com/update/sm-pr/update.json"
+description='''
+Removes Pokes
+'''
+
+[[dependencies.pokeremoval]]
+modId="forge"
+mandatory=true
+versionRange="[36,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.pokeremoval]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.16.5,1.17)"
+ordering="NONE"
+side="BOTH"
