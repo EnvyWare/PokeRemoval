@@ -6,6 +6,7 @@ import com.envyful.api.forge.concurrency.ForgeTaskBuilder;
 import com.envyful.poke.removal.forge.command.PokeRemovalCommand;
 import com.envyful.poke.removal.forge.config.PokeRemovalConfig;
 import com.envyful.poke.removal.forge.task.PokeRemovalTask;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -21,6 +22,10 @@ public class PokeRemovalForge {
     private ForgeCommandFactory commandFactory = new ForgeCommandFactory();
 
     private PokeRemovalConfig config;
+
+    public PokeRemovalForge() {
+        MinecraftForge.EVENT_BUS.register(this);
+    }
 
     @SubscribeEvent
     public void onInit(FMLServerStartingEvent event) {
