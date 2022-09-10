@@ -71,7 +71,7 @@ public class PokeRemovalTask implements Runnable {
                 while (iterator.hasNext()) {
                     Entity next = iterator.next();
 
-                    if (removalSetting.shouldRemove(next)) {
+                    if (next != null && removalSetting.shouldRemove(next)) {
                         next.kill();
                         ++removed;
                     }
