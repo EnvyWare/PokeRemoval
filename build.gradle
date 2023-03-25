@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.2"
+        classpath "gradle.plugin.com.github.johnrengelman:shadow:7.1.2"
     }
 }
 
@@ -13,7 +13,7 @@ subprojects {
     apply plugin: 'java'
 
     group = 'com.envyful.poke.removal'
-    version = '2.0.2'
+    version = '2.0.3'
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8

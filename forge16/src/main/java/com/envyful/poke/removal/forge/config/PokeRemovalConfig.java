@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.pixelmonmod.api.pokemon.PokemonSpecification;
 import com.pixelmonmod.api.pokemon.PokemonSpecificationProxy;
-import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
 import com.pixelmonmod.pixelmon.entities.pixelmon.PixelmonEntity;
 import net.minecraft.entity.Entity;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
@@ -121,7 +120,7 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
                     return false;
                 }
 
-                return this.mode.shouldRemovePokemon(this.getMatchingRequirements(), pixelmon.getPokemon());
+                return this.mode.shouldRemovePokemon(this.getMatchingRequirements(), pixelmon);
             }
 
             return true;
@@ -237,11 +236,13 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
 
             return true;
         }, (types, entity) -> {
-            String entityString = entity.getType().getRegistryName().toString();
+            if(entity.getType().getRegistryName() != null){
+                String entityString = entity.getType().getRegistryName().toString();
 
-            for (String type : types) {
-                if (type.equalsIgnoreCase(entityString)) {
-                    return false;
+                for (String type : types) {
+                    if (type.equalsIgnoreCase(entityString)) {
+                        return false;
+                    }
                 }
             }
 
@@ -250,16 +251,16 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
 
         ;
 
-        private final BiPredicate<List<PokemonSpecification>, Pokemon> pokemonRemoval;
+        private final BiPredicate<List<PokemonSpecification>, PixelmonEntity> pokemonRemoval;
         private final BiPredicate<List<String>, Entity> entityRemoval;
 
-        RemovalType(BiPredicate<List<PokemonSpecification>, Pokemon> pokemonRemoval,
+        RemovalType(BiPredicate<List<PokemonSpecification>, PixelmonEntity> pokemonRemoval,
                     BiPredicate<List<String>, Entity> entityRemoval) {
             this.pokemonRemoval = pokemonRemoval;
             this.entityRemoval = entityRemoval;
         }
 
-        public boolean shouldRemovePokemon(List<PokemonSpecification> specs, Pokemon pokemon) {
+        public boolean shouldRemovePokemon(List<PokemonSpecification> specs, PixelmonEntity pokemon) {
             return this.pokemonRemoval.test(specs, pokemon);
         }
 
