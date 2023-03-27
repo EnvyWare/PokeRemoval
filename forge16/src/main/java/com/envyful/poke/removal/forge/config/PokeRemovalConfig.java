@@ -22,7 +22,7 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
     private Map<String, RemovalSetting> removalSettings = ImmutableMap.of(
             "one", new RemovalSetting(
                     "Pokemon", RemovalType.WHITELIST, Lists.newArrayList("pixelmon:pixelmon"),
-                    Lists.newArrayList("shiny:false", "boss:notboss"), true,
+                    Lists.newArrayList("!shiny", "boss:notboss"), true,
                     Lists.newArrayList(
                             " ",
                             "&c&l!!! INACTIVE POKEMON WERE JUST CLEARED FROM THE WORLD (%amount%) !!!",
@@ -217,14 +217,16 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
 
             return false;
         }, (types, entity) -> {
-            String entityString = entity.getType().getRegistryName().toString();
+            if (entity.getType().getRegistryName() != null) {
+                String entityString = entity.getType().getRegistryName().toString();
 
-            for (String type : types) {
-                if (type.equalsIgnoreCase(entityString)) {
-                    return true;
+                for (String type : types) {
+                    if (type.equalsIgnoreCase(entityString)) {
+                        return true;
+                    }
                 }
             }
-
+			
             return false;
         }),
         BLACKLIST((pokemonSpecs, pokemon) -> {
@@ -236,7 +238,7 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
 
             return true;
         }, (types, entity) -> {
-            if(entity.getType().getRegistryName() != null){
+            if (entity.getType().getRegistryName() != null) {
                 String entityString = entity.getType().getRegistryName().toString();
 
                 for (String type : types) {
