@@ -6,33 +6,30 @@ import com.envyful.api.forge.concurrency.ForgeTaskBuilder;
 import com.envyful.poke.removal.forge.command.PokeRemovalCommand;
 import com.envyful.poke.removal.forge.config.PokeRemovalConfig;
 import com.envyful.poke.removal.forge.task.PokeRemovalTask;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
 import java.io.IOException;
 
-@Mod(
-        modid = PokeRemovalForge.MOD_ID,
-        name = "BetterDexRewards Forge",
-        version = PokeRemovalForge.VERSION,
-        acceptableRemoteVersions = "*",
-        updateJSON = "https://ogn.pixelmonmod.com/update/sm-pr/update.json"
-)
+@Mod("pokeremoval")
 public class PokeRemovalForge {
 
-    protected static final String MOD_ID = "pokeremoval";
-    protected static final String VERSION = "2.1.0";
-
-    @Mod.Instance(MOD_ID)
     private static PokeRemovalForge instance;
 
     private ForgeCommandFactory commandFactory = new ForgeCommandFactory();
 
     private PokeRemovalConfig config;
 
-    @Mod.EventHandler
-    public void onInit(FMLInitializationEvent event) {
+    public PokeRemovalForge() {
+        MinecraftForge.EVENT_BUS.register(this);
+    }
+
+    @SubscribeEvent
+    public void onInit(ServerStartingEvent event) {
+        instance = this;
         this.reloadConfig();
 
         new ForgeTaskBuilder()
@@ -51,9 +48,9 @@ public class PokeRemovalForge {
         }
     }
 
-    @Mod.EventHandler
-    public void onServerStart(FMLServerStartingEvent event) {
-        this.commandFactory.registerCommand(event.getServer(), new PokeRemovalCommand());
+    @SubscribeEvent
+    public void onServerStart(RegisterCommandsEvent event) {
+        this.commandFactory.registerCommand(event.getDispatcher(), new PokeRemovalCommand());
     }
 
     public static PokeRemovalForge getInstance() {
