@@ -137,7 +137,7 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
                 List<PokemonSpecification> matchingSpecs = Lists.newArrayList();
 
                 for (String matchingRequirement : this.matchingRequirements) {
-                    matchingSpecs.add(PokemonSpecificationProxy.create(matchingRequirement));
+                    matchingSpecs.add(PokemonSpecificationProxy.create(matchingRequirement).get());
                 }
 
                 this.matchingSpecs = matchingSpecs;

@@ -2,6 +2,7 @@ package com.envyful.poke.removal.forge;
 
 import com.envyful.api.config.yaml.YamlConfigFactory;
 import com.envyful.api.forge.command.ForgeCommandFactory;
+import com.envyful.api.forge.command.parser.ForgeAnnotationCommandParser;
 import com.envyful.api.forge.concurrency.ForgeTaskBuilder;
 import com.envyful.poke.removal.forge.command.PokeRemovalCommand;
 import com.envyful.poke.removal.forge.config.PokeRemovalConfig;
@@ -19,7 +20,7 @@ public class PokeRemovalForge {
 
     private static PokeRemovalForge instance;
 
-    private ForgeCommandFactory commandFactory = new ForgeCommandFactory();
+    private ForgeCommandFactory commandFactory = new ForgeCommandFactory(ForgeAnnotationCommandParser::new, null);
 
     private PokeRemovalConfig config;
 
@@ -50,7 +51,7 @@ public class PokeRemovalForge {
 
     @SubscribeEvent
     public void onServerStart(RegisterCommandsEvent event) {
-        this.commandFactory.registerCommand(event.getDispatcher(), new PokeRemovalCommand());
+        this.commandFactory.registerCommand(event.getDispatcher(), this.commandFactory.parseCommand(new PokeRemovalCommand()));
     }
 
     public static PokeRemovalForge getInstance() {

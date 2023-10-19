@@ -42,7 +42,7 @@ public class PokeRemovalTask implements Runnable {
                 if (TimeUnit.MILLISECONDS.toSeconds(lastRemovalDuration) == warningBroadcast.getTimeBeforeRemovalSeconds()) {
                     for (String s : warningBroadcast.getBroadcast()) {
                         ServerLifecycleHooks.getCurrentServer().getPlayerList()
-                                .broadcastSystemMessage(UtilChatColour.colour(s), true);
+                                .broadcastSystemMessage(UtilChatColour.colour(s), false);
                     }
                 }
             }
@@ -87,7 +87,7 @@ public class PokeRemovalTask implements Runnable {
                 ServerLifecycleHooks.getCurrentServer().getPlayerList().broadcastSystemMessage(UtilChatColour.colour(s.replace(
                         "%amount%",
                         removed + ""
-                )), true);
+                )), false);
             }
 
             removalSetting.setLocked(false);

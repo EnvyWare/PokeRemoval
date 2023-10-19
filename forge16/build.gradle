@@ -38,7 +38,7 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.16.5-36.2.39'
     implementation 'pixelmon:Pixelmon-1.16.5-9.1.7-server:9.1.7'
 
-    implementation 'com.github.EnvyWare.ForgePlaceholderAPI:api:2.0.4'
+    implementation 'com.envyful.papi:api:2.0.5'
 
     implementation group: 'org.spongepowered', name: 'configurate-yaml', version: '4.0.0'
 
