@@ -74,6 +74,7 @@ public class PokeRemovalTask implements Runnable {
             this.lastRemoval.put(removalSetting.getName(), System.currentTimeMillis());
 
             if (!removalSetting.isBroadcastRemoval()) {
+                removalSetting.setLocked(false);
                 continue;
             }
 
