@@ -25,6 +25,10 @@ public class PokeRemovalTask implements Runnable {
 
     @Override
     public void run() {
+        if (PlatformProxy.getPlayerManager().getOnlinePlayers().size() < this.mod.getConfig().getMinOnlinePlayers()) {
+            return;
+        }
+
         List<PokeRemovalConfig.RemovalSetting> toRemove = Lists.newArrayList();
 
         for (var value : this.mod.getConfig().getRemovalSettings().values()) {

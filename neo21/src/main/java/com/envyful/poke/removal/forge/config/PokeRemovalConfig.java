@@ -53,11 +53,17 @@ public class PokeRemovalConfig extends AbstractYamlConfig {
             )
     );
 
+    private int minOnlinePlayers = 1;
+
     public PokeRemovalConfig() {
     }
 
     public Map<String, RemovalSetting> getRemovalSettings() {
         return this.removalSettings;
+    }
+
+    public int getMinOnlinePlayers() {
+        return this.minOnlinePlayers;
     }
 
     @ConfigSerializable
