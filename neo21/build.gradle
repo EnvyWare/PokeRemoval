@@ -1,0 +1,71 @@
+plugins {
+    id 'net.neoforged.moddev' version '2.0.80'
+    id 'com.gradleup.shadow' version '8.3.6'
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+forgeVersion = "1.21.1"
+platform = "NeoForge"
+
+neoForge {
+    version = "21.1.162"
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+repositories {}
+
+dependencies {
+    var pixelmonVersion = "9.3.6"
+    implementation "pixelmon:Pixelmon-1.21.1-${pixelmonVersion}-universal:${pixelmonVersion}"
+    interfaceInjectionData("pixelmon:Pixelmon-1.21.1-${pixelmonVersion}-universal-interfaceinjection:${pixelmonVersion}@json")
+
+    implementation 'com.envyful.papi:api:2.1.0'
+
+    implementation group: 'org.spongepowered', name: 'configurate-yaml', version: '4.2.0-COMMENTS'
+
+    var apiVersion = "8.1.9"
+    shadow (group: 'com.envyful.api', name: 'commons', version: apiVersion)
+    shadow (group: 'com.envyful.api', name: 'neo21', version: apiVersion) {
+        transitive = false
+    }
+    shadow (group: 'com.envyful.api', name: 'pixel21', version: apiVersion) {
+        transitive = false
+    }
+}
+
+shadowJar {
+    configurations = [project.configurations.shadow]
+    setArchiveClassifier('')
+    setArchiveBaseName("${rootProject.name}-NeoForge")
+
+    relocate('org.apache.commons.jexl', 'com.envyful.poke.removal.forge.shade.jexl')
+    relocate('org.spongepowered.configurate', 'com.envyful.poke.removal.forge.shade.configurate')
+    relocate('org.yaml.snakeyaml', 'com.envyful.poke.removal.forge.shade.snakeyaml')
+    relocate('io.leangen.geantyref', 'com.envyful.poke.removal.forge.shade.geantyref')
+    relocate('com.zaxxer', 'com.envyful.poke.removal.forge.shade.hikari')
+    relocate('org.slf4j', 'com.envyful.poke.removal.forge.shade.slf4j')
+    relocate('com.envyful.api', 'com.envyful.poke.removal.forge.shade.envy.api')
+    relocate('org.bstats', 'com.envyful.poke.removal.forge.shade.bstats')
+    relocate('io.netty', 'com.envyful.poke.removal.forge.shade.netty')
+    relocate('io.lettuce', 'com.envyful.poke.removal.forge.shade.lettuce')
+    relocate('com.cronutils', 'com.envyful.poke.removal.forge.shade.cronutils')
+    relocate('com.sun.el', 'com.envyful.poke.removal.forge.shade.sun.el')
+    relocate('org.reactivestreams', 'com.envyful.poke.removal.forge.shade.reactivestreams')
+    relocate('reactor', 'com.envyful.poke.removal.forge.shade.reactor')
+    relocate('com.mysql', 'com.envyful.poke.removal.forge.shade.mysql')
+    relocate('uk.co.envyware.helios', 'com.envyful.poke.removal.forge.shade.uk.co.envyware.helios')
+
+    exclude "com/google/**"
+    exclude "org/apache/commons/logging/**"
+    exclude "org/apache/logging/log4j/**"
+    exclude "javax/**"
+    exclude "**/module-info.class"
+    exclude "META-INF/versions/9/**"
+    exclude "META-INF/native-image/**"
+    exclude "META-INF/services/**"
+}
+
+jar.finalizedBy('shadowJar')
+shadowJar.finalizedBy('reobfJar')
+build.finalizedBy('versionedRelease')
