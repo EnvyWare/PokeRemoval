@@ -67,5 +67,4 @@ shadowJar {
 }
 
 jar.finalizedBy('shadowJar')
-shadowJar.finalizedBy('reobfJar')
 build.finalizedBy('versionedRelease')
